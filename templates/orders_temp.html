@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+
+    <div class="col-sm-11 col-md-11 col-lg-7 mx-auto">
+
+      {% if orders %}
+        <div class="limiter mb-5">
+        <div class="table100">
+             <table class="">
+                <thead>
+                  <tr class="table100-head">
+                    <th class="pl-3">No</th>
+                    <th class="pl-3">Order No.</th>
+                    <th class="pl-4"><i class="fa fa-calendar" aria-hidden="true"></i></th>
+                    <th>Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+              {% for blob in orders %}
+              <tr>
+                <td class="pl-3">{{blob.0}}</td>
+                  <td><a href="{% url 'display_order' container=container order_no=blob.1 date=blob.2 %}" class="text-primary pl-3 mt-3">{{ blob.1 }}</a></td>
+                  <td><span class="text-info">{{ blob.2 }}</span></td>
+                  <td>
+                      <a href="{% url 'remove_order' container=container order_no=blob.1 date=blob.2 %}" class="text-dark ml-3">
+                          <i class="fa fa-lg fa-trash mb-1"></i>
+                      </a>
+                  </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+             </table>
+        </div>
+      {% else %}
+
+        <div class="mt-5 text-center">
+            {% if container == 'updated-orders' %}
+                <h3 class="mt-5 text-danger text-center mx-auto">No Updated Orders!</h3>
+            {% else %}
+                <h3 class="mt-5 text-danger text-center mx-auto">No Completed Orders!</h3>
+                <a href="{% url 'load_orders' redirect_url=redirect_url %}" class="btn btn-success mt-2">Load Orders</a>
+            {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    </div>
+
+
+
+
+<script>
+    function search_animal() {
+	let input = document.getElementById('searchbar').value
+	input=input.toLowerCase();
+    var order_list = {{orderlist|safe}};
+    // console.log(order_list);
+
+    for (i = 0; i < x.length; i++) {
+		if (!x[i].innerHTML.toLowerCase().includes(input)) {
+			x[i].style.display="none";
+		}
+		else {
+			x[i].style.display="list-item";
+		}
+	}
+
+};
+</script>
+{% endblock %}
+
+
+
+
+
+if (!order_list.includes(input)) {
+        console.log('no');
+    }
+    else {
+        console.log(input);
+    }

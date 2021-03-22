@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+
+
+    <div class="col-lg-5 col-md-8 col-sm-11 mx-auto">
+      {% if deleted_orders %}
+
+        <div class="limiter mb-5">
+        <div class="table100">
+             <table class="">
+                <thead>
+                  <tr class="table100-head">
+                    <th class="pl-3">No</th>
+                    <th class="pl-3">Order No.</th>
+                    <th class="pl-4"><i class="fa fa-calendar" aria-hidden="true"></i></th>
+                  </tr>
+                </thead>
+                <tbody>
+              {% for blob in deleted_orders %}
+              <tr>
+                <td class="pl-3">{{blob.0}}</td>
+                  <td><a href="{% url 'display_order' container='deleted-orders' order_no=blob.1 date=blob.2 %}" class="text-primary pl-3 mt-3">{{ blob.1 }}</a></td>
+                  <td><span class="text-info">{{ blob.2 }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+             </table>
+        </div>
+      {% else %}
+        <div class="mt-5 text-center">
+            <h3 class="mt-5 text-danger text-center mx-auto">No Orders!</h3>
+        </div>
+      {% endif %}
+    </div>
+    </div>
+
+{% endblock %}

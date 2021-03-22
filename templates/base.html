@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Order Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        .page-link{
+            font-size:12px !important;
+        }
+
+    </style>
+</head>
+<body>
+
+{% url 'home_page' as home_page_url %}
+{% url 'updated_orders' as updated_orders_url %}
+{% url 'completed_orders' as completed_orders_url %}
+{% url 'deleted_orders' as deleted_orders_url %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="collapse navbar-collapse ml-3" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+       <li class="nav-item {% if request.path == home_page_url %}active{% endif %}">
+          <a class="nav-link" href="/">New Orders <span class="sr-only">(current)</span></a>
+       </li>
+       <li class="nav-item {% if request.path == updated_orders_url %}active{% endif %}">
+          <a class="nav-link" href="{% url 'updated_orders' %}">Updated</a>
+       </li>
+       <li class="nav-item {% if request.path == completed_orders_url %}active{% endif %}">
+          <a class="nav-link" href="{% url 'completed_orders' %}">Completed</a>
+       </li>
+       <li class="nav-item {% if request.path == deleted_orders_url %}active{% endif %}">
+          <a class="nav-link" href="{% url 'deleted_orders' %}">Deleted</a>
+       </li>
+    </ul>
+    <span class="navbar-text">
+        <a
+         href="{% url 'load_orders' redirect_url=redirect_url %}"
+         class="mr-5 btn btn-sm btn-primary"
+         style="visibility:{% if request.path == home_page_url or request.path == completed_orders_url %}visible{% else %}hidden{% endif %}">
+         Load Orders
+        </a>
+    </span>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="mb-3">
+      <div class="text-center mb-2" style="height:;">
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible text-center" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                     {{ message }}
+                  </div>
+              {% endfor %}
+         {% endif %}
+      </div>
+        {% block main %}
+
+        {% endblock %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+   <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+
+    <li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
+        <a class="page-link" href="?page=1" tabindex="-1">FIRST</a>
+    </li>
+    <li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
+        <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %} " tabindex="-1">Previous</a>
+    </li>
+
+    {% if page_obj.number|add:'-4' > 1 %}
+        <li class="page-item disabled"><a class="page-link" href="?page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
+    {% endif %}
+
+    {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+            <li class="active page-item disabled"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+        <li class="page-item disabled"><a class="page-link" href="?page={{ page_obj.number|add:'5' }}">&hellip;</a></li>
+    {% endif %}
+
+    <li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
+        <a class="page-link" href="{% if page_obj.has_next %} ?page={{ page_obj.next_page_number }} {% endif %}">Next</a>
+    </li>
+    <li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
+        <a class="page-link" href="{% if page_obj.has_next %} ?page={{ page_obj.paginator.num_pages }}  {% endif %}">LAST</a>
+    </li>
+</ul>
+   </nav>
+    <br>
+  {% endif %}
+
+</div>
+
+<script>
+    function displayNext(obj){
+          var nextElement = obj.parentElement.nextElementSibling.firstChild.nextElementSibling;
+          var icon = obj.firstChild.nextElementSibling;
+
+          var minus_icons = document.getElementsByClassName("fa-minus");
+          var forms = document.getElementsByClassName("visible");
+
+          if (minus_icons.length == 1){
+             minus_icons[0].classList.add("fa-plus");
+             minus_icons[0].classList.remove("fa-minus");
+             };
+          if (forms.length == 1){
+             forms[0].classList.add("invisible");
+             forms[0].classList.remove("visible");
+             };
+          if (nextElement.classList.contains('invisible')){
+             nextElement.classList.add("visible");
+             nextElement.classList.remove("invisible");
+
+             icon.classList.add("fa-minus");
+             icon.classList.remove("fa-plus");
+             } else if (nextElement.classList.contains('visible')){
+             console.log('yes');
+             nextElement.classList.add("invisible");
+             nextElement.classList.remove("visible");
+
+             icon.classList.add("fa-plus");
+             icon.classList.remove("fa-minus");
+             };
+
+    }
+</script>
+</body>
+</html>

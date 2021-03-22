@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+
+    <div class="col-sm-11 col-md-11 col-lg-10 mx-auto">
+        {% if new_orders %}
+        <div class="limiter">
+             <div class="mt-2">
+                <div class="table100">
+                   <table>
+                      <thead>
+                         <tr class="table100-head">
+                            <th class="pl-3">No</th>
+                                    <th>Order No</th>
+                                    <th class="pl-4"><i class="fa fa-calendar" aria-hidden="true"></i></th>
+                            <th>Add Tracking No</th>
+                            <th></th>
+                         </tr>
+                      </thead>
+                      <tbody>
+                         {% for blob in new_orders %}
+                            <tr style="font-size:14px !important;">
+                               <td class="pl-3">{{ blob.0 }}</td>
+                               <td>
+                                    <a class="text-primary animals" href="{% url 'display_order' container='new-orders' order_no=blob.1 date=blob.2 %}">{{ blob.1 }}</a>
+                                </td>
+                               <td><span class="text-info">{{ blob.2 }}</span></td>
+                               <td class="pl-5">
+                                    <span class="text-primary" onclick="displayNext(this)">
+                                          <i class="fa fa-plus p-1" aria-hidden="true"></i>
+                                    </span>
+                                </td>
+                                <td>
+                                    <form action="{% url 'add_tracking_no' %}" method="POST" class="form-inline invisible">{% csrf_token %}
+                                          <input type="hidden" name="order_no" value="{{ blob.1 }}">
+                                          <input type="hidden" name="date" value="{{ blob.2 }}">
+                                          <input type="text" name="tracking_no" style="padding-left:8px;" placeholder="Enter Tracking Number" class="form-control border">
+                                          <input type="submit" class="btn btn-primary" style="padding:5px 8px; margin-left: 4px;">
+                                    </form>
+                                 </td>
+                            </tr>
+                         {% endfor %}
+                      </tbody>
+                   </table>
+                </div>
+             </div>
+          </div>
+        {% else %}
+        <div class="mt-5 text-center">
+            <h3 class="mt-5 text-danger text-center mx-auto">No Orders!</h3>
+            <a href="{% url 'load_orders' redirect_url=redirect_url %}" class="btn btn-success mt-2">Load Orders</a>
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}
